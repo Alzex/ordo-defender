@@ -13,7 +13,10 @@ const messagesHelper = {
     },
     isFirst: async (ctx) => {
       const key = `firstMsgFiltration:${ctx.chat.id}:${ctx.from.id}`;
-      const data = await cacheHelper.get(key);
+      const data = await cacheHelper.get(key).catch((e) => {
+          console.error(`[REDIS ERROR] messagesHelper isFirst cacheHelper.get`, e.message);
+          throw e;
+      })
       return data;
     }
 }
