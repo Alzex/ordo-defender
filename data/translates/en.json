@@ -6,7 +6,8 @@
   },
   "errors": {
     "notAReply": "<b>❌ ERROR</b>\n\nIncorrect command call. This command can be called only as a response to another user's message.",
-    "noWarns": "No valid warns detected for this user :/"
+    "noWarns": "No valid warns detected for this user :/",
+    "muteArgNaN": "<b>❌ ERROR</b>\n\nIncorrect command call. Correct format:\n/warn h - where <code>h</code> is amount of hours"
   },
   "reasonNotSpecified": "<i>Not specified</i>"
 }

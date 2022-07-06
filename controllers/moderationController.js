@@ -74,6 +74,16 @@ const moderationController = {
         });
     },
     mute: async (ctx) => {
+        const argumentsQuery = ctx.message.text.split(' ');
+        const hours = parseInt(argumentsQuery[1]);
+        if (isNaN(hours)) {
+            const text = translate.getTranslate(ctx.from.language_code).errors.muteArgNaN;
+
+            await ctx.reply(text, {parse_mode: 'HTML'}).catch((e) => {
+                console.error(`[TG API ERROR] moderationController unwarn ctx.reply:`, e.message);
+            });
+        }
+
 
     },
     kick: async (ctx) => {
