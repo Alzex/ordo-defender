@@ -6,7 +6,7 @@ const chatController = {
     processMembership: async (ctx) => {
         const membershipStatus = ctx.myChatMember.new_chat_member.status;
         if (membershipStatus === 'member' || membershipStatus === 'administrator') {
-            const chat = await chatManagers.getChatById(ctx.chat.id);
+            const chat = await chatManagers.getChat(ctx.chat.id);
 
             if (!chat) await chatManagers.addChat(ctx.chat.id);
        }
