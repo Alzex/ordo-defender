@@ -1,0 +1,12 @@
+{
+  "commands": {
+    "start": "Greetings, {name}!\nThis bot is created for chat moderation!",
+    "warn": "<b>VERBAL WARNING ⚠️</b>\n\n<b>❗ VIOLATOR:</b> {user1}\n\nReason: {reason}\nIssued by: {user0}\n\n{cur}/{max}",
+    "unwarn": "Unwarned {user0} ✅\n\nIssued by: {user1}"
+  },
+  "errors": {
+    "notAReply": "<b>❌ ERROR</b>\n\nIncorrect command call. This command can be called only as a response to another user's message.",
+    "noWarns": "No valid warns detected for this user :/"
+  },
+  "reasonNotSpecified": "<i>Not specified</i>"
+}
