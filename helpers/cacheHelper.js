@@ -1,6 +1,9 @@
 const cache = require('../modules/cache');
 
 const cacheHelper = {
+    genKey: (type, chatId, userId) => {
+      return `${type}:${chatId}:${userId}`;
+    },
     set: (key, ttl, value = null) => {
         let jsonValue = '';
 
@@ -15,7 +18,7 @@ const cacheHelper = {
     },
     del: (key) => {
         return cache.del(key);
-    }
+    },
 }
 
 module.exports = cacheHelper;

@@ -20,7 +20,7 @@ const messagesMiddleware = {
     },
     isFirstAndWithoutLink: async (ctx, next) => {
         const isFirst = await messagesHelper.isFirst(ctx);
-        const key = `firstMsgFiltration:${ctx.chat.id}:${ctx.from.id}`;
+        const key = cacheHelper.genKey('firstMsgFiltration', ctx.chat.id, ctx.from.id);
 
         if (messagesHelper.containsLink(ctx) && isFirst === '') {
             await ctx.telegram.deleteMessage(ctx.chat.id, ctx.message.message_id);
