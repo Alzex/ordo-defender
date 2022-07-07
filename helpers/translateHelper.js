@@ -1,6 +1,6 @@
 const translateHelper = {
     parseNames: (text, user) => {
-        return text.replaceAll('{name}', `<b><a href="tg://user?id=${user.id}">${user.first_name}</a></b>`);
+        return text.replaceAll('{user}', `<b><a href="tg://user?id=${user.id}">${user.first_name}</a></b>`);
     },
     multiParseNames: (text, ...users) => {
         let txt = text;

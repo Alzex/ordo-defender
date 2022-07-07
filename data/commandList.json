@@ -1,0 +1,47 @@
+[
+  {
+    "name": "profile",
+    "description": {
+      "en": "Displays your profile",
+      "ru": "Твой профиль",
+      "uk": "Твій профіль"
+    },
+    "scope": "all_group_chats"
+  },
+  {
+    "name": "warn",
+    "description": {
+      "en": "Issues warning to a user",
+      "ru": "Выдает УП пользователю",
+      "uk": "Видає УП користувачу"
+    },
+    "scope": "all_chat_administrators"
+  },
+  {
+    "name": "unwarn",
+    "description": {
+      "en": "Cancels the earliest warning",
+      "ru": "Отменяет самое старое УП",
+      "uk": "Скасовує найстаріше УП"
+    },
+    "scope": "all_chat_administrators"
+  },
+  {
+    "name": "mute",
+    "description": {
+      "en": "Mutes the user",
+      "ru": "Накладывает мут на пользователя",
+      "uk": "Накладує мут на користувача"
+    },
+    "scope": "all_chat_administrators"
+  },
+  {
+    "name": "unmute",
+    "description": {
+      "en": "Unmutes the user",
+      "ru": "Отменяет мут пользователя",
+      "uk": "Скасовує мут користувача"
+    },
+    "scope": "all_chat_administrators"
+  }
+]

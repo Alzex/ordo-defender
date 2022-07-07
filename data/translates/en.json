@@ -2,12 +2,29 @@
   "commands": {
     "start": "Greetings, {name}!\nThis bot is created for chat moderation!",
     "warn": "<b>VERBAL WARNING ⚠️</b>\n\n<b>❗ VIOLATOR:</b> {user1}\n\nReason: {reason}\nIssued by: {user0}\n\n{cur}/{max}",
-    "unwarn": "Unwarned {user0} ✅\n\nIssued by: {user1}"
+    "unwarn": "Unwarned {user0} ✅\n\nIssued by: {user1}",
+    "mute": "<b>Muted 🔇</b>\n\n<b>Violator:</b> {user0}\n\nDuration: {duration} h\nIssued by: {user1}",
+    "unmute": "<b>Unmuted \uD83D\uDD08</b>\n\n<b> Unmuted:</b> {user0}\n\nIssued by: {user1}",
+    "profile": "<b>👤 {user}'s profile</b>\n\nID: {id}\n⚠️Warns: {cur}/{max}",
+    "history": "<b>\uD83D\uDEC3 {user}'s moderation history </b>\n\n"
+  },
+  "keyboards": {
+    "profile": {
+      "history": "🛃 Moderation history"
+    }
+  },
+  "entities": {
+    "punishWarn": "Type: {type}\nReason: {reason}\nDate of issue: {date}\nIssued by: {user}\nState: {state}\n\n",
+    "warn": "<i>Warn ⚠️</i>",
+    "mute": "\uD83D\uDD07 Mute",
+    "warnValid": "<b>Valid</b> 🔁",
+    "warnExpired": "<b>Not valid</b> ⏳",
+    "warnDisposed": "<b>Not Valid</b> ❌"
   },
   "errors": {
     "notAReply": "<b>❌ ERROR</b>\n\nIncorrect command call. This command can be called only as a response to another user's message.",
     "noWarns": "No valid warns detected for this user :/",
-    "muteArgNaN": "<b>❌ ERROR</b>\n\nIncorrect command call. Correct format:\n/warn h - where <code>h</code> is amount of hours"
+    "muteArgNaN": "<b>❌ ERROR</b>\n\nIncorrect command call. Correct format:\n<code>/mute h</code> - where <code>h</code> is amount of hours"
   },
   "reasonNotSpecified": "<i>Not specified</i>"
 }

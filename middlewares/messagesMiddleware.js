@@ -20,6 +20,13 @@ const messagesMiddleware = {
         }
         await next();
     },
+    deleteCommandQuery: async (ctx, next) => {
+      await ctx.telegram.deleteMessage(ctx.chat.id, ctx.message.message_id).catch((e) => {
+          console.error(`[TG API ERROR] messagesMiddleware deleteCommandQuery ctx.telegram.deleteMessage:`, e.message);
+      });
+
+      await next();
+    },
     isFirstAndWithoutLink: async (ctx, next) => {
         const isFirst = await messagesHelper.isFirst(ctx).catch((e) => {
             console.error(`[REDIS ERROR] messagesMiddleware isFirstAndWithoutLink messagesHelper.isFirst:`, e.message);
