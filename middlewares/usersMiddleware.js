@@ -17,29 +17,27 @@ const usersMiddleware = {
 
         for (const dev of devs) {
             if (dev === ctx.from.id) {
-                return await next();
+                await next();
             }
         }
 
         const chat = ctx.chat;
         const admins = await ctx.telegram.getChatAdministrators(chat.id).catch((e) => {
-            console.error('[TG API ERROR] usersMiddleware isAdminOrDev ctx.telegram.getChatAdministrators');
+            console.error('[TG API ERROR] usersMiddleware isAdminOrDev ctx.telegram.getChatAdministrators', e.message);
         });
 
         for (const admin of admins) {
             if (admin.user.id === ctx.from.id) {
-                return await next();
+                await next();
             }
         }
-
-        return null;
     },
     isDev: async (ctx, next) => {
         const devs = config.ADMIN_IDS;
 
         for (const dev of devs) {
             if (dev === ctx.from.id) {
-                return await next();
+                await next();
             }
         }
     },
@@ -49,7 +47,7 @@ const usersMiddleware = {
         if (target.is_bot || target.id === ctx.from.id) return null;
 
         const targetMember = await ctx.telegram.getChatMember(ctx.chat.id, target.id).catch((e) => {
-            console.error('[TG API ERROR] usersMiddleware targetNotBotOrAdminOrSelf ctx.telegram.getChatMember');
+            console.error('[TG API ERROR] usersMiddleware targetNotBotOrAdminOrSelf ctx.telegram.getChatMember:', e.message);
         });
         const targetMembership = targetMember.status;
 
