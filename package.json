@@ -13,12 +13,11 @@
   "dependencies": {
     "mariadb": "^3.0.0",
     "moment": "^2.29.4",
-    "node-cache": "^5.1.2",
     "redis": "^4.1.1",
-    "telegraf": "^4.8.5"
+    "telegraf": "^4.8.5",
+    "dotenv": "^16.0.1"
   },
   "devDependencies": {
-    "dotenv": "^16.0.1",
     "nodemon": "^2.0.18"
   }
 }

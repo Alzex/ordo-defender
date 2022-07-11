@@ -20,6 +20,18 @@ const punishmentManagers = {
     getAllPunishments: (userId, chatId) => {
         const punish = db.query(`SELECT * FROM punishment WHERE violator_id = ${userId} AND from_chat_id = ${chatId}`);
         return punish;
+    },
+    getPunishments(userId, chatId, offset = 0, limit = 5) {
+        const punish = db.query(`SELECT * FROM punishment WHERE violator_id = ${userId} AND from_chat_id = ${chatId} LIMIT ${limit} OFFSET ${offset}`);
+        return punish;
+    },
+    countAllPunishments(userId, chatId) {
+        const count = db.query(`SELECT COUNT(*) AS amount FROM punishment WHERE violator_id = ${userId} AND from_chat_id = ${chatId}`);
+        return count;
+    },
+    disposeOutdated(userId, chatId, days = 7) {
+        const ds = db.query(`UPDATE punishment SET disposed_at = NOW() WHERE violator_id = ${userId} AND from_chat_id = ${chatId} AND type = ${enums.PUNISHMENT.WARN} AND DATEDIFF(NOW(), issued_at) >= ${days}`);
+        return ds;
     }
 }
 

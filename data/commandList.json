@@ -9,6 +9,15 @@
     "scope": "all_group_chats"
   },
   {
+    "name": "settings",
+    "description": {
+      "en": "Change language of the bot",
+      "ru": "Сменить язык бота",
+      "uk": "Змінити мову бота"
+    },
+    "scope": "all_group_chats"
+  },
+  {
     "name": "warn",
     "description": {
       "en": "Issues warning to a user",
@@ -23,6 +32,24 @@
       "en": "Cancels the earliest warning",
       "ru": "Отменяет самое старое УП",
       "uk": "Скасовує найстаріше УП"
+    },
+    "scope": "all_chat_administrators"
+  },
+  {
+    "name": "ban",
+    "description": {
+      "en": "Bans the user",
+      "ru": "Банит пользователя",
+      "uk": "Бан користувача"
+    },
+    "scope": "all_chat_administrators"
+  },
+  {
+    "name": "kick",
+    "description": {
+      "en": "Kicks the user",
+      "ru": "Кикает пользователя",
+      "uk": "Кік користувача"
     },
     "scope": "all_chat_administrators"
   },

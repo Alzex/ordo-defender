@@ -1,4 +1,7 @@
 const config = require('../data/config');
+const translate = require('../data/translate')
+const userManagers = require('../managers/userManagers');
+const punishmentManagers = require('../managers/punishmentManager');
 
 const usersMiddleware = {
     canReply: async (ctx, next) => {
@@ -18,6 +21,7 @@ const usersMiddleware = {
         for (const dev of devs) {
             if (dev === ctx.from.id) {
                 await next();
+                return;
             }
         }
 
@@ -29,6 +33,7 @@ const usersMiddleware = {
         for (const admin of admins) {
             if (admin.user.id === ctx.from.id) {
                 await next();
+                return;
             }
         }
     },
@@ -54,6 +59,31 @@ const usersMiddleware = {
         if (targetMembership === 'administrator') return null;
 
         await next();
+    },
+    async warnsDispose(ctx, next) {
+        await punishmentManagers.disposeOutdated(ctx.from.id, ctx.chat.id);
+        await next();
+
+    },
+    async queryLimiter(ctx, next) {
+        const userId = ctx.update.callback_query.data.split(':')[1];
+        if (ctx.from.id === parseInt(userId, 10)) {
+            await next();
+            return;
+        }
+        await ctx.answerCbQuery(translate.get(ctx.state.langCode).errors.notYourMsg);
+    },
+    async applyLanguage(ctx, next) {
+      const userRows = await userManagers.getUser(ctx.from.id);
+      if (!userRows[0]) {
+          await userManagers.addUser(ctx.from.id, ctx.state.langCode);
+          ctx.state.langCode = ctx.state.langCode ? ctx.state.langCode : 'en';
+          await next();
+          return;
+      }
+      const user = userRows[0];
+      ctx.state.langCode = user.language_code;
+      await next();
     }
 
 }

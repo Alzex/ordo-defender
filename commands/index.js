@@ -7,9 +7,10 @@ const botController = require('../controllers/botController');
 const commands = {
     init: (bot) => {
         bot
-            .command('start', usersMiddleware.canReply, standartController.start)
-            .command('help', usersMiddleware.canReply, standartController.start)
-            .command('profile', usersMiddleware.canReply, standartController.profile)
+            .command('start', usersMiddleware.canReply, usersMiddleware.applyLanguage, standartController.start)
+            .command('help', usersMiddleware.canReply, usersMiddleware.applyLanguage, standartController.start)
+            .command('settings', usersMiddleware.canReply, usersMiddleware.applyLanguage, standartController.settings)
+            .command('profile', messagesMiddleware.notFromPM, usersMiddleware.canReply, usersMiddleware.warnsDispose,usersMiddleware.applyLanguage, standartController.profile)
 
             //moderation
             .command('warn',
@@ -19,6 +20,7 @@ const commands = {
                 messagesMiddleware.isReply,
                 usersMiddleware.targetNotBotOrAdminOrSelf,
                 messagesMiddleware.deleteCommandQuery,
+                usersMiddleware.applyLanguage,
                 moderationController.warn
             )
             .command('unwarn',
@@ -28,6 +30,7 @@ const commands = {
                 messagesMiddleware.isReply,
                 usersMiddleware.targetNotBotOrAdminOrSelf,
                 messagesMiddleware.deleteCommandQuery,
+                usersMiddleware.applyLanguage,
                 moderationController.unwarn
             )
             .command('mute',
@@ -37,6 +40,7 @@ const commands = {
                 messagesMiddleware.isReply,
                 usersMiddleware.targetNotBotOrAdminOrSelf,
                 messagesMiddleware.deleteCommandQuery,
+                usersMiddleware.applyLanguage,
                 moderationController.mute
             )
             .command('unmute',
@@ -46,6 +50,7 @@ const commands = {
                 messagesMiddleware.isReply,
                 usersMiddleware.targetNotBotOrAdminOrSelf,
                 messagesMiddleware.deleteCommandQuery,
+                usersMiddleware.applyLanguage,
                 moderationController.unmute
             )
             .command('kick',
@@ -54,6 +59,8 @@ const commands = {
                 usersMiddleware.isAdminOrDev,
                 messagesMiddleware.isReply,
                 usersMiddleware.targetNotBotOrAdminOrSelf,
+                messagesMiddleware.deleteCommandQuery,
+                usersMiddleware.applyLanguage,
                 moderationController.kick
             )
             .command('ban',
@@ -62,9 +69,12 @@ const commands = {
                 usersMiddleware.isAdminOrDev,
                 messagesMiddleware.isReply,
                 usersMiddleware.targetNotBotOrAdminOrSelf,
+                messagesMiddleware.deleteCommandQuery,
+                usersMiddleware.applyLanguage,
                 moderationController.ban
             )
 
+            //dev
             .command('updateCommandList', usersMiddleware.canReply, usersMiddleware.isDev, botController.updateCommandList)
     }
 }

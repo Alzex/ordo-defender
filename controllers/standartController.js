@@ -2,12 +2,14 @@ const translateData = require('../data/translate');
 const translateHelper = require('../helpers/translateHelper');
 const chatManagers = require('../managers/chatManagers');
 const punishmentManager = require('../managers/punishmentManager');
+const userManagers = require('../managers/userManagers');
 const keyboards = require('../data/keyboards');
 
 const standartController = {
     start: async (ctx) => {
-        const userLangCode = ctx.from.language_code;
-        const rawText = translateData.getTranslate(userLangCode).commands.start;
+        const userLangCode = ctx.state.langCode;
+        ctx.state
+        const rawText = translateData.get(userLangCode).commands.start;
         const text = translateHelper.parseNames(rawText, ctx.from);
         if (ctx.chat.type !== 'private') {
             const chatsQuery = await chatManagers.getChat(ctx.chat.id).catch((e) => {
@@ -27,7 +29,7 @@ const standartController = {
         });
     },
     profile: async (ctx) => {
-        let text = translateData.getTranslate(ctx.from.language_code).commands.profile;
+        let text = translateData.get(ctx.state.langCode).commands.profile;
         text = translateHelper.parseNames(text, ctx.from);
 
         const chatData = await chatManagers.getChat(ctx.chat.id).catch((e) => {
@@ -54,10 +56,35 @@ const standartController = {
         text = text.replace('{max}', max);
         text = text.replace('{id}', ctx.from.id)
 
-        await ctx.reply(text, {parse_mode: 'HTML', ...keyboards.profileKeyboard(ctx.chat.id, ctx.from.id, ctx.from.language_code)}).catch((e) => {
+        if (ctx.update.callback_query) {
+            await ctx.editMessageText(text, {parse_mode: 'HTML', ...keyboards.profileKeyboard(ctx.state.langCode, ctx.from.id)});
+            await ctx.answerCbQuery();
+            return;
+        }
+
+        await ctx.reply(text, {parse_mode: 'HTML', ...keyboards.profileKeyboard(ctx.state.langCode, ctx.from.id)}).catch((e) => {
             console.error('[TG API ERROR] standartController profile ctx.reply:', e.message);
             throw e;
         });
+    },
+    async settings(ctx) {
+        const langs = {
+            'ru': 'Сейчас выбран: <b>русский</b>',
+            'uk': 'Зараз обрана: <b>українська</b>',
+            'en': 'Current language: <b>english</b>',
+        }
+        if (!ctx.update.callback_query) {
+            ctx.reply(langs[ctx.state.langCode], {parse_mode: 'HTML',...keyboards.settingsKeyboard(ctx.from.id)});
+            return;
+        }
+        const newLang = ctx.update.callback_query.data.split(':')[2];
+        if (newLang === ctx.state.langCode) {
+            await ctx.answerCbQuery();
+            return;
+        }
+        ctx.state.langCode = newLang;
+        await userManagers.editLanguage(ctx.from.id, newLang);
+        await ctx.editMessageText(langs[ctx.state.langCode], {parse_mode: 'HTML',...keyboards.settingsKeyboard(ctx.from.id)});
     }
 }
 

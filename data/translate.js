@@ -5,7 +5,7 @@ const uk = require('./translates/uk.json');
 const translates = {ru, en, uk};
 
 const translateData = {
-    getTranslate(code) {
+    get(code) {
         return Object.keys(translates).includes(code) ? translates[code] : translates.en;
     }
 }

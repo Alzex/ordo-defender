@@ -20,7 +20,14 @@ const userHelper = {
                 can_send_other_messages: true
             }
         })
+    },
+    kick(tg, chat, user) {
+        const untilMs = Date.now() + 60 * 1000;
+        const msInSeconds = 1000;
+        const until = Math.floor(untilMs / msInSeconds);
+        return tg.banChatMember(chat.id, user.id, until);
     }
-};
+}
+
 
 module.exports = userHelper;
