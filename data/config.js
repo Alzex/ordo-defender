@@ -19,4 +19,6 @@ const config = {
     MESSAGE_MONITOR_TTL: 3600 * 24 * 7,
 }
 
+console.dir(config.db);
+
 module.exports = config;
