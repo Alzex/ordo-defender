@@ -17,7 +17,8 @@ const errorHandler = {
             if (ctx.update.callback_query) {
                 text = ctx.update.callback_query.data;
             }
-            await ctx.telegram.sendMessage(config.ERROR_CHAT, `<b>SYSTEM BUG REPORTℹ️</b>\n\n<b>Execution query:</b>\n${text}\n\n<b>Error message:</b>\n${e.message}\n\n<b>Stack:</b>\n${e.stack}`, {parse_mode: 'HTML'}).catch((e) => {
+            const message = e.message.replace('<','').replace('>', '');
+            await ctx.telegram.sendMessage(config.ERROR_CHAT, `<b>SYSTEM BUG REPORTℹ️</b>\n\n<b>Execution query:</b>\n${text}\n\n<b>Error message:</b>\n${message}\n\n<b>Stack:</b>\n${e.stack}`, {parse_mode: 'HTML'}).catch((e) => {
                 log.fatal(e.message);
             });
         }
