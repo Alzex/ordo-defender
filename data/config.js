@@ -3,14 +3,14 @@ const dotenv = require('dotenv');
 dotenv.config();
 
 const config = {
-    TOKEN: process.env.TOKEN,
+    TOKEN: process.env.DEFENDER_TG_BOT_API_TOKEN,
     ADMIN_IDS: [237022109],
     db: {
-        ADDRESS: process.env.DB_ADDRESS,
-        PORT: process.env.DB_PORT,
-        USER: process.env.DB_USER,
-        PASSWORD: process.env.DB_PASSWORD,
-        NAME: process.env.DB_NAME
+        ADDRESS: process.env.MYSQL_1_DEFENDER_DB_HOSTNAME,
+        PORT: process.env.MYSQL_1_PORT,
+        USER: process.env.MYSQL_1_USER,
+        PASSWORD: process.env.MYSQL_1_PASSWORD,
+        NAME: process.env.MYSQL_1_DEFENDER_DB_NAME
     },
     REDIS_URL: process.env.REDIS_URL,
     ERROR_CHAT: -1001653150520,
