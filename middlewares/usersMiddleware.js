@@ -70,7 +70,8 @@ const usersMiddleware = {
     },
     async botIsAdmin(ctx, next) {
         const self = await ctx.telegram.getChatMember(ctx.chat.id, ctx.botInfo.id).catch((e) => {
-
+            logger.tg.fatal(e.message);
+            throw e;
         });
         if (self.status === 'administrator') {
             await next();
