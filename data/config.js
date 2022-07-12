@@ -6,7 +6,7 @@ const config = {
     TOKEN: process.env.DEFENDER_TG_BOT_API_TOKEN,
     ADMIN_IDS: [237022109],
     db: {
-        ADDRESS: process.env.MYSQL_1_DEFENDER_DB_HOSTNAME,
+        ADDRESS: process.env.MYSQL_1_DB_HOSTNAME,
         PORT: process.env.MYSQL_1_PORT,
         USER: process.env.MYSQL_1_USER,
         PASSWORD: process.env.MYSQL_1_PASSWORD,
