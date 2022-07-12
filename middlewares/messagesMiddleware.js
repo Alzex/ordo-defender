@@ -19,7 +19,7 @@ const messagesMiddleware = {
         if (ctx.chat.type === 'private') {
             await ctx.reply(translate.get(ctx.state.langCode).errors.pm, {...keyboards.pmKeyboard(ctx.state.langCode)});
             return null;
-        } else if (ctx.message?.forward_from?.chat.type === 'channel') {
+        } else if (ctx.message?.forward_from?.chat?.type === 'channel') {
             return null;
         }
         await next();
