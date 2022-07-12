@@ -1,5 +1,4 @@
 FROM node:16-alpine
-MAINTAINER "Alzex alexzeml@gmail.com"
 
 RUN apk --no-cache upgrade && \
     apk --no-cache add tzdata && \
@@ -9,7 +8,6 @@ RUN apk --no-cache upgrade && \
 WORKDIR /app
 COPY . .
 
-RUN npm install -g node-gyp && \
-    npm install --only=prod
+RUN npm install
 
 ENTRYPOINT ["npm", "run", "start"]
