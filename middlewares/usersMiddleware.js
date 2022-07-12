@@ -2,6 +2,7 @@ const config = require('../data/config');
 const translate = require('../data/translate')
 const userManagers = require('../managers/userManagers');
 const punishmentManagers = require('../managers/punishmentManager');
+const logger = require('../modules/logger');
 
 const usersMiddleware = {
     canReply: async (ctx, next) => {
@@ -27,7 +28,8 @@ const usersMiddleware = {
 
         const chat = ctx.chat;
         const admins = await ctx.telegram.getChatAdministrators(chat.id).catch((e) => {
-            console.error('[TG API ERROR] usersMiddleware isAdminOrDev ctx.telegram.getChatAdministrators', e.message);
+            logger.tg.fatal(e.message);
+            throw e;
         });
 
         for (const admin of admins) {
@@ -52,7 +54,8 @@ const usersMiddleware = {
         if (target.is_bot || target.id === ctx.from.id) return null;
 
         const targetMember = await ctx.telegram.getChatMember(ctx.chat.id, target.id).catch((e) => {
-            console.error('[TG API ERROR] usersMiddleware targetNotBotOrAdminOrSelf ctx.telegram.getChatMember:', e.message);
+            logger.tg.fatal(e.message);
+            throw e;
         });
         const targetMembership = targetMember.status;
 
@@ -66,11 +69,12 @@ const usersMiddleware = {
 
     },
     async botIsAdmin(ctx, next) {
-        const self = await ctx.telegram.getChatMember(ctx.chat.id, ctx.botInfo.id);
+        const self = await ctx.telegram.getChatMember(ctx.chat.id, ctx.botInfo.id).catch((e) => {
+
+        });
         if (self.status === 'administrator') {
             await next();
         }
-        return;
     },
     async queryLimiter(ctx, next) {
         const userId = ctx.update.callback_query.data.split(':')[1];
@@ -78,12 +82,17 @@ const usersMiddleware = {
             await next();
             return;
         }
-        await ctx.answerCbQuery(translate.get(ctx.state.langCode).errors.notYourMsg);
+        await ctx.answerCbQuery(translate.get(ctx.state.langCode).errors.notYourMsg).catch((e) => {
+            logger.tg.error(e.message);
+        });
     },
     async applyLanguage(ctx, next) {
       const userRows = await userManagers.getUser(ctx.from.id);
       if (!userRows[0]) {
-          await userManagers.addUser(ctx.from.id, ctx.state.langCode);
+          await userManagers.addUser(ctx.from.id, ctx.state.langCode).catch((e) => {
+              logger.db.fatal(e.message);
+              throw e;
+          });
           ctx.state.langCode = ctx.state.langCode ? ctx.state.langCode : 'en';
           await next();
           return;

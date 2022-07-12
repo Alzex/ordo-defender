@@ -4,27 +4,27 @@ const chatManagers = require('../managers/chatManagers');
 const punishmentManager = require('../managers/punishmentManager');
 const userManagers = require('../managers/userManagers');
 const keyboards = require('../data/keyboards');
+const logger = require("../modules/logger");
 
 const standartController = {
     start: async (ctx) => {
         const userLangCode = ctx.state.langCode;
-        ctx.state
         const rawText = translateData.get(userLangCode).commands.start;
         const text = translateHelper.parseNames(rawText, ctx.from);
         if (ctx.chat.type !== 'private') {
             const chatsQuery = await chatManagers.getChat(ctx.chat.id).catch((e) => {
-                console.error('[DB ERROR] standartController start chatManagers.getChat:', e.message);
+                logger.db.fatal(e.message);
                 throw e;
             });
             if (!chatsQuery[0]) {
                 await chatManagers.addChat(ctx.chat.id).catch((e) => {
-                    console.error('[DB ERROR] standartController start chatManagers.addChat:', e.message);
+                    logger.db.fatal(e.message);
                     throw e;
                 });
             }
         }
         await ctx.reply(text, {parse_mode: 'HTML'}).catch((e) => {
-            console.error('[TG API ERROR] standartController start ctx.reply:', e.message);
+            logger.tg.fatal(e.message);
             throw e;
         });
     },
@@ -33,19 +33,19 @@ const standartController = {
         text = translateHelper.parseNames(text, ctx.from);
 
         const chatData = await chatManagers.getChat(ctx.chat.id).catch((e) => {
-            console.error('[DB ERROR] standartController profile chatManagers.getChat:', e.message);
+            logger.db.fatal(e.message);
             throw e;
         });
 
         if (!chatData) {
             await chatManagers.addChat(ctx.chat.id).catch((e) => {
-                console.error('[DB ERROR] standartController profile chatManagers.addChat:', e.message);
+                logger.db.fatal(e.message);
                 throw e;
-            });;
+            });
         }
 
         const punishments = await punishmentManager.getValidUsersPunishmentsFromChat(ctx.from.id, ctx.chat.id).catch((e) => {
-            console.error('[DB ERROR] standartController profile punishmentManager.getValidUsersPunishmentsFromChat:', e.message);
+            logger.db.fatal(e.message);
             throw e;
         });
 
@@ -57,14 +57,16 @@ const standartController = {
         text = text.replace('{id}', ctx.from.id)
 
         if (ctx.update.callback_query) {
-            await ctx.editMessageText(text, {parse_mode: 'HTML', ...keyboards.profileKeyboard(ctx.state.langCode, ctx.from.id)});
+            await ctx.editMessageText(text, {parse_mode: 'HTML', ...keyboards.profileKeyboard(ctx.state.langCode, ctx.from.id)}).catch((e) => {
+                logger.tg.fatal(e.message);
+                throw e;
+            });
             await ctx.answerCbQuery();
             return;
         }
 
         await ctx.reply(text, {parse_mode: 'HTML', ...keyboards.profileKeyboard(ctx.state.langCode, ctx.from.id)}).catch((e) => {
-            console.error('[TG API ERROR] standartController profile ctx.reply:', e.message);
-            throw e;
+            logger.tg.error(e.message);
         });
     },
     async settings(ctx) {
@@ -74,7 +76,10 @@ const standartController = {
             'en': 'Current language: <b>english</b>',
         }
         if (!ctx.update.callback_query) {
-            ctx.reply(langs[ctx.state.langCode], {parse_mode: 'HTML',...keyboards.settingsKeyboard(ctx.from.id)});
+            await ctx.reply(langs[ctx.state.langCode], {parse_mode: 'HTML',...keyboards.settingsKeyboard(ctx.from.id)}).catch((e) => {
+                logger.tg.fatal(e.message);
+                throw e;
+            });
             return;
         }
         const newLang = ctx.update.callback_query.data.split(':')[2];
@@ -83,8 +88,13 @@ const standartController = {
             return;
         }
         ctx.state.langCode = newLang;
-        await userManagers.editLanguage(ctx.from.id, newLang);
-        await ctx.editMessageText(langs[ctx.state.langCode], {parse_mode: 'HTML',...keyboards.settingsKeyboard(ctx.from.id)});
+        await userManagers.editLanguage(ctx.from.id, newLang).catch((e) => {
+            logger.db.fatal(e.message);
+            throw e;
+        });
+        await ctx.editMessageText(langs[ctx.state.langCode], {parse_mode: 'HTML',...keyboards.settingsKeyboard(ctx.from.id)}).catch((e) => {
+            logger.tg.error(e.message);
+        });
     }
 }
 

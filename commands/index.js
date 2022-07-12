@@ -18,10 +18,10 @@ const commands = {
                 messagesMiddleware.notFromPM,
                 usersMiddleware.botIsAdmin,
                 usersMiddleware.isAdminOrDev,
+                usersMiddleware.applyLanguage,
                 messagesMiddleware.isReply,
                 usersMiddleware.targetNotBotOrAdminOrSelf,
                 messagesMiddleware.deleteCommandQuery,
-                usersMiddleware.applyLanguage,
                 moderationController.warn
             )
             .command('unwarn',
@@ -29,10 +29,10 @@ const commands = {
                 messagesMiddleware.notFromPM,
                 usersMiddleware.botIsAdmin,
                 usersMiddleware.isAdminOrDev,
+                usersMiddleware.applyLanguage,
                 messagesMiddleware.isReply,
                 usersMiddleware.targetNotBotOrAdminOrSelf,
                 messagesMiddleware.deleteCommandQuery,
-                usersMiddleware.applyLanguage,
                 moderationController.unwarn
             )
             .command('mute',
@@ -40,10 +40,10 @@ const commands = {
                 messagesMiddleware.notFromPM,
                 usersMiddleware.botIsAdmin,
                 usersMiddleware.isAdminOrDev,
+                usersMiddleware.applyLanguage,
                 messagesMiddleware.isReply,
                 usersMiddleware.targetNotBotOrAdminOrSelf,
                 messagesMiddleware.deleteCommandQuery,
-                usersMiddleware.applyLanguage,
                 moderationController.mute
             )
             .command('unmute',

@@ -6,6 +6,7 @@ const chatManagers = require('../managers/chatManagers');
 const keyboards = require('../data/keyboards');
 const enums = require('../data/enums');
 const moment = require('moment');
+const logger = require("../modules/logger");
 
 const moderationController = {
     warn: async (ctx) => {
@@ -18,22 +19,25 @@ const moderationController = {
         const reason = reasonText ? reasonText : null;
 
         await punishmentManagers.addPunishment(violator.id, issuer.id, ctx.chat.id, reason).catch((e) => {
-            console.error(`[DB ERROR] moderationController warn punishmentsManager.addPunishment:`, e.message);
+            logger.db.fatal(e.message);
             throw e;
         });
 
         const punishments = await punishmentManagers.getValidUsersPunishmentsFromChat(violator.id, ctx.chat.id).catch((e) => {
-            console.error(`[DB ERROR] moderationController warn punishmentsManager.getValidUsersPunishmentsFromChat:`, e.message);
+            logger.db.fatal(e.message);
             throw e;
         });
 
         const chatData = await chatManagers.getChat(ctx.chat.id).catch((e) => {
-            console.error(`[DB ERROR] moderationController warn chatManagers.getChat:`, e.message);
+            logger.db.fatal(e.message);
             throw e;
         });
 
         if (!chatData[0]) {
-            await chatManagers.addChat(ctx.chat.id);
+            await chatManagers.addChat(ctx.chat.id).catch((e) => {
+                logger.db.fatal(e.message);
+                throw e;
+            });
         }
 
         const maxPunishments = chatData[0] ? chatData[0].max_warns : 3;
@@ -44,13 +48,14 @@ const moderationController = {
         text = text.replace('{reason}', reason ?  reasonText : trn.reasonNotSpecified);
 
         await ctx.reply(text, {parse_mode: 'HTML'}).catch((e) => {
-            console.error(`[TG API ERROR] moderationController warn ctx.reply:`, e.message);
+            logger.tg.fatal(e.message);
+            throw e;
         });
 
         if (punishments.length >= maxPunishments) {
             const defaultDuration = chatData[0].warn_duration;
             await userHelper.mute(ctx.telegram, ctx.chat, violator, defaultDuration).catch((e) => {
-                console.error(`[TG API ERROR] moderationController warn userHelper.mute:`, e.message);
+                logger.tg.fatal(e.message);
                 throw e;
             });
         }
@@ -58,7 +63,7 @@ const moderationController = {
     unwarn: async (ctx) => {
         const violator = ctx.message.reply_to_message.from;
         const result = await punishmentManagers.disposeEarliestPunishment(violator.id, ctx.chat.id, ctx.from.id).catch((e) => {
-            console.error(`[DB ERROR] moderationController unwarn punishmentManagers.disposeEarliestPunishment:`, e.message);
+            logger.db.fatal(e.message);
             throw e;
         });
         const trn = translate.get(ctx.state.langCode);
@@ -66,7 +71,7 @@ const moderationController = {
         if (result.affectedRows === 0) {
             const text = trn.errors.noWarns;
             await ctx.reply(text).catch((e) => {
-                console.error(`[TG API ERROR] moderationController unwarn ctx.reply:`, e.message);
+                logger.tg.error(e.message);
             });
             return;
         }
@@ -74,7 +79,7 @@ const moderationController = {
         const rawText = trn.commands.unwarn;
         const text = translateHelper.multiParseNames(rawText, violator, ctx.from);
         await ctx.reply(text, {parse_mode: 'HTML'}).catch((e) => {
-            console.error(`[TG API ERROR] moderationController unwarn ctx.reply:`, e.message);
+            logger.tg.error(e.message);
         });
     },
     mute: async (ctx) => {
@@ -88,7 +93,7 @@ const moderationController = {
             const text = translate.get(ctx.state.langCode).errors.muteArgNaN;
 
             await ctx.reply(text, {parse_mode: 'HTML'}).catch((e) => {
-                console.error(`[TG API ERROR] moderationController mute if(isNaN) ctx.reply:`, e.message);
+                logger.tg.error(e.message);
             });
             return;
         }
@@ -97,7 +102,7 @@ const moderationController = {
         const violator = ctx.message.reply_to_message.from;
 
         await userHelper.mute(ctx.telegram, ctx.chat, violator, duration).catch((e) => {
-            console.error(`[TG API ERROR] moderationController mute userHelper.mute:`, e.message);
+            logger.tg.fatal(e.message);
             throw e;
         });
 
@@ -107,7 +112,9 @@ const moderationController = {
 
         await punishmentManagers.addPunishment(violator.id, ctx.from.id, ctx.chat.id, reason ? reason : null, enums.PUNISHMENT.MUTE);
 
-        await ctx.reply(text, {parse_mode: 'HTML'});
+        await ctx.reply(text, {parse_mode: 'HTML'}).catch((e) => {
+            logger.tg.error(e.message);
+        });
     },
     unmute: async (ctx) => {
         const violator = ctx.message.reply_to_message.from;
@@ -117,7 +124,10 @@ const moderationController = {
 
         await userHelper.unmute(ctx.telegram, ctx.chat, violator);
 
-        await ctx.reply(text, {parse_mode: 'HTML'});
+        await ctx.reply(text, {parse_mode: 'HTML'}).catch((e) => {
+            logger.tg.fatal(e.message);
+            throw e;
+        });
     },
     kick: async (ctx) => {
         const violator = ctx.message.reply_to_message.from;
@@ -130,9 +140,18 @@ const moderationController = {
         text = translateHelper.multiParseNames(text, violator, ctx.from);
         text = text.replace('{reason}', reason ? reason : tr.reasonNotSpecified);
 
-        await userHelper.kick(ctx.telegram, ctx.chat, violator);
-        await punishmentManagers.addPunishment(violator.id, ctx.from.id, ctx.chat.id, reason, enums.PUNISHMENT.KICK);
-        await ctx.reply(text, {parse_mode: 'HTML'});
+        await userHelper.kick(ctx.telegram, ctx.chat, violator).catch((e) => {
+            logger.tg.fatal(e.message);
+            throw e;
+        });
+
+        await punishmentManagers.addPunishment(violator.id, ctx.from.id, ctx.chat.id, reason, enums.PUNISHMENT.KICK).catch((e) => {
+            logger.db.error(e.message);
+        });
+
+        await ctx.reply(text, {parse_mode: 'HTML'}).catch((e) => {
+            logger.tg.error(e.message);
+        });
     },
     ban: async (ctx) => {
         const violator = ctx.message.reply_to_message.from;
@@ -145,9 +164,18 @@ const moderationController = {
         text = translateHelper.multiParseNames(text, violator, ctx.from);
         text = text.replace('{reason}', reason ? reason : tr.reasonNotSpecified);
 
-        await ctx.telegram.banChatMember(ctx.chat.id, violator.id);
-        await punishmentManagers.addPunishment(violator.id, ctx.from.id, ctx.chat.id, null, enums.PUNISHMENT.BAN);
-        await ctx.reply(text, {parse_mode: 'HTML'});
+        await ctx.telegram.banChatMember(ctx.chat.id, violator.id).catch((e) => {
+            logger.tg.fatal(e.message);
+            throw e;
+        });
+
+        await punishmentManagers.addPunishment(violator.id, ctx.from.id, ctx.chat.id, null, enums.PUNISHMENT.BAN).catch((e) => {
+            logger.db.error(e.message);
+        });
+
+        await ctx.reply(text, {parse_mode: 'HTML'}).catch((e) => {
+            logger.tg.error(e.message);
+        });
     },
     history: async (ctx) => {
         const punishAmount = await punishmentManagers.countAllPunishments(ctx.from.id, ctx.chat.id);
@@ -162,10 +190,20 @@ const moderationController = {
 
         if (amount === 0) {
             text += '<i>Пусто</i>';
-            await ctx.editMessageText(text, {parse_mode: 'HTML', ...keyboards.backKeyboard(ctx.state.langCode, ctx.from.id)});
+
+            await ctx.editMessageText(text, {parse_mode: 'HTML', ...keyboards.backKeyboard(ctx.state.langCode, ctx.from.id)}).catch((e) => {
+                logger.tg.fatal(e.message);
+                throw e;
+            });
+
             return;
         } else if (amount <= 5) {
-            punishments = await punishmentManagers.getPunishments(ctx.from.id, ctx.chat.id);
+
+            punishments = await punishmentManagers.getPunishments(ctx.from.id, ctx.chat.id).catch((e) => {
+                logger.db.fatal(e.message);
+                throw e;
+            });
+
             markup = keyboards.backKeyboard(ctx.state.langCode, ctx.from.id);
         } else {
             maxPages = Math.ceil(amount / 5);
@@ -184,7 +222,10 @@ const moderationController = {
                 }
             }
 
-            punishments = await punishmentManagers.getPunishments(ctx.from.id, ctx.chat.id, curPage * 5);
+            punishments = await punishmentManagers.getPunishments(ctx.from.id, ctx.chat.id, curPage * 5).catch((e) => {
+                logger.db.fatal(e.message);
+                throw e;
+            });
             markup = keyboards.pagesKeyboard(curPage === 0, curPage + 1 === maxPages, curPage, ctx.from.id, ctx.state.langCode);
         }
 
@@ -192,9 +233,14 @@ const moderationController = {
 
 
         for (const punishment of punishments) {
+
             const issuer = await ctx.telegram.getChatMember(ctx.chat.id, Number(punishment.issuer_id)).catch((e) => {
                 console.error(`[TG API ERROR] moderationController history  ctx.telegram.getChatMember:`, e.message);
+            }).catch((e) => {
+                logger.tg.fatal(e.message);
+                throw e;
             });
+
             text += tr.entities.punishWarn;
             text = translateHelper.parseNames(text, issuer.user);
             text = text.replace('{type}', tr.typeToText[punishment.type.toString()]);
@@ -215,8 +261,14 @@ const moderationController = {
             text = text.replace('{maxP}', maxPages);
         }
 
-        await ctx.editMessageText(text, {parse_mode: 'HTML', ...markup});
-        await ctx.answerCbQuery();
+        await ctx.editMessageText(text, {parse_mode: 'HTML', ...markup}).catch((e) => {
+            logger.tg.fatal(e.message);
+            throw e;
+        });
+
+        await ctx.answerCbQuery().catch((e) => {
+            logger.tg.error(e.message);
+        });
     }
 }
 
