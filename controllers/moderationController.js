@@ -127,7 +127,7 @@ const moderationController = {
         text = translateHelper.multiParseNames(text, violator, ctx.from);
         text = text.replace('{reason}', reason ? reason : tr.reasonNotSpecified);
 
-        //await userHelper.kick(ctx.telegram, ctx.chat, violator);
+        await userHelper.kick(ctx.telegram, ctx.chat, violator);
         await punishmentManagers.addPunishment(violator.id, ctx.from.id, ctx.chat.id, reason, enums.PUNISHMENT.KICK);
         await ctx.reply(text, {parse_mode: 'HTML'});
     },
@@ -142,7 +142,7 @@ const moderationController = {
         text = translateHelper.multiParseNames(text, violator, ctx.from);
         text = text.replace('{reason}', reason ? reason : tr.reasonNotSpecified);
 
-        //await ctx.telegram.banChatMember(ctx.chat.id, violator.id);
+        await ctx.telegram.banChatMember(ctx.chat.id, violator.id);
         await punishmentManagers.addPunishment(violator.id, ctx.from.id, ctx.chat.id, null, enums.PUNISHMENT.BAN);
         await ctx.reply(text, {parse_mode: 'HTML'});
     },
