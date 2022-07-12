@@ -10,12 +10,13 @@ const commands = {
             .command('start', usersMiddleware.canReply, usersMiddleware.applyLanguage, standartController.start)
             .command('help', usersMiddleware.canReply, usersMiddleware.applyLanguage, standartController.start)
             .command('settings', usersMiddleware.canReply, usersMiddleware.applyLanguage, standartController.settings)
-            .command('profile', messagesMiddleware.notFromPM, usersMiddleware.canReply, usersMiddleware.warnsDispose,usersMiddleware.applyLanguage, standartController.profile)
+            .command('profile', messagesMiddleware.notFromPM, usersMiddleware.canReply, usersMiddleware.warnsDispose, usersMiddleware.applyLanguage, standartController.profile)
 
             //moderation
             .command('warn',
                 usersMiddleware.canReply,
                 messagesMiddleware.notFromPM,
+                usersMiddleware.botIsAdmin,
                 usersMiddleware.isAdminOrDev,
                 messagesMiddleware.isReply,
                 usersMiddleware.targetNotBotOrAdminOrSelf,
@@ -26,6 +27,7 @@ const commands = {
             .command('unwarn',
                 usersMiddleware.canReply,
                 messagesMiddleware.notFromPM,
+                usersMiddleware.botIsAdmin,
                 usersMiddleware.isAdminOrDev,
                 messagesMiddleware.isReply,
                 usersMiddleware.targetNotBotOrAdminOrSelf,
@@ -36,6 +38,7 @@ const commands = {
             .command('mute',
                 usersMiddleware.canReply,
                 messagesMiddleware.notFromPM,
+                usersMiddleware.botIsAdmin,
                 usersMiddleware.isAdminOrDev,
                 messagesMiddleware.isReply,
                 usersMiddleware.targetNotBotOrAdminOrSelf,
@@ -46,6 +49,7 @@ const commands = {
             .command('unmute',
                 usersMiddleware.canReply,
                 messagesMiddleware.notFromPM,
+                usersMiddleware.botIsAdmin,
                 usersMiddleware.isAdminOrDev,
                 messagesMiddleware.isReply,
                 usersMiddleware.targetNotBotOrAdminOrSelf,
@@ -56,6 +60,7 @@ const commands = {
             .command('kick',
                 usersMiddleware.canReply,
                 messagesMiddleware.notFromPM,
+                usersMiddleware.botIsAdmin,
                 usersMiddleware.isAdminOrDev,
                 messagesMiddleware.isReply,
                 usersMiddleware.targetNotBotOrAdminOrSelf,
@@ -66,6 +71,7 @@ const commands = {
             .command('ban',
                 usersMiddleware.canReply,
                 messagesMiddleware.notFromPM,
+                usersMiddleware.botIsAdmin,
                 usersMiddleware.isAdminOrDev,
                 messagesMiddleware.isReply,
                 usersMiddleware.targetNotBotOrAdminOrSelf,

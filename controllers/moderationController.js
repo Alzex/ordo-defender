@@ -80,7 +80,10 @@ const moderationController = {
     mute: async (ctx) => {
         const argumentsQuery = ctx.message.text.split(' ');
         const hours = parseInt(argumentsQuery[1], 10);
-        const reason = ctx.message.text.substring(argumentsQuery[0].length + argumentsQuery[1].length + 2);
+        let reason = null
+        if (argumentsQuery[1]) {
+            reason = ctx.message.text.substring(argumentsQuery[0].length + argumentsQuery[1].length + 2);
+        }
         if (isNaN(hours) || hours < 1) {
             const text = translate.get(ctx.state.langCode).errors.muteArgNaN;
 

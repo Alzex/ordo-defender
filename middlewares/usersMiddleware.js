@@ -65,6 +65,13 @@ const usersMiddleware = {
         await next();
 
     },
+    async botIsAdmin(ctx, next) {
+        const self = await ctx.telegram.getChatMember(ctx.chat.id, ctx.botInfo.id);
+        if (self.status === 'administrator') {
+            await next();
+        }
+        return;
+    },
     async queryLimiter(ctx, next) {
         const userId = ctx.update.callback_query.data.split(':')[1];
         if (ctx.from.id === parseInt(userId, 10)) {
