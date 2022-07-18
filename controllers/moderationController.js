@@ -33,7 +33,7 @@ const moderationController = {
             throw e;
         });
 
-        if (!chatData[0]) {
+        if (!chatData) {
             await chatManagers.addChat(ctx.chat.id).catch((e) => {
                 logger.db.fatal(e.message);
                 throw e;
@@ -41,11 +41,12 @@ const moderationController = {
         }
 
         const maxPunishments = chatData[0] ? chatData[0].max_warns : 3;
+        console.log(reason);
 
         let text = translateHelper.multiParseNames(rawText, issuer, violator);
         text = text.replace('{cur}', punishments.length);
         text = text.replace('{max}', maxPunishments);
-        text = text.replace('{reason}', reason ?  reasonText : trn.reasonNotSpecified);
+        text = text.replace('{reason}', reason === 'NULL' ?  reasonText : trn.reasonNotSpecified);
 
         await ctx.reply(text, {parse_mode: 'HTML'}).catch((e) => {
             logger.tg.fatal(e.message);
@@ -68,7 +69,7 @@ const moderationController = {
         });
         const trn = translate.get(ctx.state.langCode);
 
-        if (result.affectedRows === 0) {
+        if (!result[0]) {
             const text = trn.errors.noWarns;
             await ctx.reply(text).catch((e) => {
                 logger.tg.error(e.message);
@@ -85,7 +86,8 @@ const moderationController = {
     mute: async (ctx) => {
         const argumentsQuery = ctx.message.text.split(' ');
         const hours = parseInt(argumentsQuery[1], 10);
-        let reason = null
+        let reason = null;
+
         if (argumentsQuery[1]) {
             reason = ctx.message.text.substring(argumentsQuery[0].length + argumentsQuery[1].length + 2);
         }
@@ -138,7 +140,7 @@ const moderationController = {
         let text = tr.commands.kick;
 
         text = translateHelper.multiParseNames(text, violator, ctx.from);
-        text = text.replace('{reason}', reason ? reason : tr.reasonNotSpecified);
+        text = text.replace('{reason}', reason === 'NULL' ?  tr.reasonNotSpecified : reason);
 
         await userHelper.kick(ctx.telegram, ctx.chat, violator).catch((e) => {
             logger.tg.fatal(e.message);
@@ -162,7 +164,7 @@ const moderationController = {
         let text = tr.commands.ban;
 
         text = translateHelper.multiParseNames(text, violator, ctx.from);
-        text = text.replace('{reason}', reason ? reason : tr.reasonNotSpecified);
+        text = text.replace('{reason}', reason === 'NULL' ?  tr.reasonNotSpecified : reason);
 
         await ctx.telegram.banChatMember(ctx.chat.id, violator.id).catch((e) => {
             logger.tg.fatal(e.message);
@@ -178,8 +180,7 @@ const moderationController = {
         });
     },
     history: async (ctx) => {
-        const punishAmount = await punishmentManagers.countAllPunishments(ctx.from.id, ctx.chat.id);
-        const amount = Number(punishAmount[0].amount);
+        const amount = await punishmentManagers.countAllPunishments(ctx.from.id, ctx.chat.id);
         let text = translate.get(ctx.state.langCode).commands.history;
         text = translateHelper.parseNames(text, ctx.from);
 
@@ -247,7 +248,7 @@ const moderationController = {
             text = text.replace('{date}', moment(punishment.issued_at).format('DD.MM.YYYY HH:mm:ss'));
             let valid = punishment.disposed_at && punishment.disposed_by ? tr.entities.warnDisposed : tr.entities.warnExpired;
             valid = punishment.disposed_at ? valid : tr.entities.warnValid;
-            const reason = punishment.reason ? punishment.reason : tr.reasonNotSpecified;
+            const reason = punishment.reason === 'NULL' ? tr.reasonNotSpecified : punishment.reason;
             text = text.replace('{reason}', reason);
             if (punishment.type === enums.PUNISHMENT.WARN) {
                 text += tr.entities.stateWarn;

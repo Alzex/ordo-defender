@@ -2,15 +2,34 @@ const db = require('../modules/db');
 
 const userManagers = {
     addUser: (id, langCode = 'en') => {
-        const user = db.query(`INSERT INTO user(id, language_code) VALUES (${id}, '${langCode}')`);
+        const user = db.user.create({
+            data: {
+                id: id,
+                language_code: langCode
+            }
+        });
+
         return user;
     },
     getUser: (id) => {
-        const user = db.query(`SELECT * FROM user WHERE id = ${id}`);
+        const user = db.user.findUnique({
+            where: {
+                id: id
+            }
+        });
+
         return user;
     },
     editLanguage(id, code) {
-        const user = db.query(`UPDATE user SET language_code = '${code}' WHERE id = ${id}`);
+        const user = db.user.update({
+            where: {
+                id: id
+            },
+            data: {
+                language_code: langCode
+            }
+        });
+        
         return user;
     }
 }

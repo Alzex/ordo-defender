@@ -10,7 +10,8 @@ const config = {
         PORT: process.env.MYSQL_1_PORT,
         USER: process.env.MYSQL_1_USER,
         PASSWORD: process.env.MYSQL_1_PASSWORD,
-        NAME: process.env.MYSQL_1_DEFENDER_DB_NAME
+        NAME: process.env.MYSQL_1_DEFENDER_DB_NAME,
+        URL: process.env.DATABASE_URL
     },
     REDIS_URL: process.env.REDIS_URL,
     ERROR_CHAT: -1001653150520,

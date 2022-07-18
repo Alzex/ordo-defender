@@ -1,0 +1,42 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model chat {
+  id                        BigInt @id
+  greeting_message          String @default("Welcome, {name}!") @db.VarChar(255)
+  is_greet                  Int    @default(1) @db.TinyInt
+  max_warns                 Int    @default(3)
+  warn_punish               Int    @default(1)
+  anti_spam_enabled         Int    @default(1) @db.TinyInt
+  first_link_filter_enabled Int    @default(1) @db.TinyInt
+  warn_duration             Int    @default(605220000)
+  mute_duration             Int    @default(43200000)
+}
+
+model punishment {
+  id           Int       @id @default(autoincrement())
+  violator_id  BigInt
+  issuer_id    BigInt
+  reason       String?   @db.VarChar(255)
+  issued_at    DateTime  @default(now()) @db.DateTime(0)
+  from_chat_id BigInt
+  disposed_at  DateTime? @db.DateTime(0)
+  disposed_by  BigInt?
+  type         Int       @default(0)
+
+  @@index([from_chat_id], map: "from_chat_id_idx")
+  @@index([issuer_id], map: "issuer_id_idx")
+  @@index([violator_id], map: "violator_id_idx")
+}
+
+model user {
+  id            BigInt   @id
+  language_code String   @default("en") @db.VarChar(10)
+  created_at    DateTime @default(now()) @db.DateTime(0)
+}

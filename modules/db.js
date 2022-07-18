@@ -1,12 +1,12 @@
-const mariadb = require('mariadb');
+const { PrismaClient } = require('@prisma/client');
 const config = require('../data/config');
 
-const pool = mariadb.createPool({
-    host: config.db.ADDRESS,
-    port: config.db.PORT,
-    user: config.db.USER,
-    password: config.db.PASSWORD,
-    database: config.db.NAME
-})
+const prisma = new PrismaClient({
+    datasources: {
+        db: {
+            url: config.db.URL
+        }
+    }
+});
 
-module.exports = pool;
+module.exports = prisma;

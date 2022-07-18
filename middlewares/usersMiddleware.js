@@ -89,7 +89,8 @@ const usersMiddleware = {
     },
     async applyLanguage(ctx, next) {
       const userRows = await userManagers.getUser(ctx.from.id);
-      if (!userRows[0]) {
+
+      if (!userRows) {
           await userManagers.addUser(ctx.from.id, ctx.state.langCode).catch((e) => {
               logger.db.fatal(e.message);
               throw e;
@@ -98,7 +99,7 @@ const usersMiddleware = {
           await next();
           return;
       }
-      const user = userRows[0];
+      const user = userRows;
       ctx.state.langCode = user.language_code;
       await next();
     }
