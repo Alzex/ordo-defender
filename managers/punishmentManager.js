@@ -3,14 +3,13 @@ const enums = require('../data/enums');
 
 const punishmentManagers = {
     addPunishment: (violatorId, punisherId, chatID, reasonText = null, type = enums.PUNISHMENT.WARN) => {
-        const reason = reasonText ? `'${reasonText}'` : 'NULL';
 
         const punish = db.punishment.create({
             data: {
                 violator_id: violatorId,
                 issuer_id: punisherId,
                 from_chat_id: chatID,
-                reason: reason,
+                reason: reasonText,
                 type: type
             }
         });
