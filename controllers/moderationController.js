@@ -46,7 +46,7 @@ const moderationController = {
         let text = translateHelper.multiParseNames(rawText, issuer, violator);
         text = text.replace('{cur}', punishments.length);
         text = text.replace('{max}', maxPunishments);
-        text = text.replace('{reason}', reason === 'NULL' ?  reasonText : trn.reasonNotSpecified);
+        text = text.replace('{reason}', reason === 'NULL' ?  trn.reasonNotSpecified : reasonText);
 
         await ctx.reply(text, {parse_mode: 'HTML'}).catch((e) => {
             logger.tg.fatal(e.message);
