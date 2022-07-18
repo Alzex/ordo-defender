@@ -26,10 +26,10 @@ const userManagers = {
                 id: id
             },
             data: {
-                language_code: langCode
+                language_code: code
             }
         });
-        
+
         return user;
     }
 }
