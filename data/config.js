@@ -5,6 +5,7 @@ dotenv.config();
 const config = {
     TOKEN: process.env.DEFENDER_TG_BOT_API_TOKEN,
     ADMIN_IDS: [237022109],
+    SENTRY: process.env.SENTRY,
     db: {
         URL: process.env.DATABASE_URL
     },

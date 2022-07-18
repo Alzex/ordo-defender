@@ -1,5 +1,11 @@
 const config = require('../data/config');
+const Sentry = require('@sentry/node');
 const { Logger } = require('tslog');
+
+Sentry.init({
+    dsn: config.SENTRY,
+    tracesSampleRate: 1.0,
+});
 
 const errorHandler = {
     async onError(ctx, next) {
@@ -7,6 +13,12 @@ const errorHandler = {
             ctx.state.log = new Logger();
             await next();
         } catch (e) {
+            try {
+                Sentry.captureException(e);
+            }
+            catch(e) {
+                new Logger({name: 'SENTRY'}).error(e);
+            }
             const log = new Logger({name: 'TG API'});
             await ctx.reply('Что-то пошло не так... (>_<)').catch((e) => {
                 log.fatal(e.message);
