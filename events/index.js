@@ -8,10 +8,13 @@ const events = {
             .on('my_chat_member', messagesMiddleware.notFromPM, chatController.processMembership)
             .on('new_chat_member',messagesMiddleware.notFromPM, usersMiddleware.canReply, chatController.processNewUsers)
             .on('message',
+                usersMiddleware.applyLanguage,
                 messagesMiddleware.notFromPM,
                 usersMiddleware.botIsAdmin,
                 usersMiddleware.canReply,
+                usersMiddleware.whiteList,
                 messagesMiddleware.isFirstAndWithoutLink,
+                messagesMiddleware.stickerSpamFilter,
                 messagesMiddleware.dublicateFilter
             );
     }

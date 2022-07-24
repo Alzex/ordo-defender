@@ -23,7 +23,8 @@
     "warnExpired": "<b>Not valid</b> ⏳",
     "warnDisposed": "<b>Not Valid</b> ❌",
     "empty": "<i>Empty</i>",
-    "pages": "\nPage {curP} of {maxP}"
+    "pages": "\nPage {curP} of {maxP}",
+    "stickerWarn": "<b>⚠️ Attention, {user}!</b>\n\nYou're sending stickers too fast, if you continue in that way you may be muted for 3 hours \uD83D\uDE20"
   },
   "typeToText": {
     "0": "<i>Warn ⚠️</i>",

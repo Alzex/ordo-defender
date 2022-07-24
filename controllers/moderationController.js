@@ -10,56 +10,9 @@ const logger = require("../modules/logger");
 
 const moderationController = {
     warn: async (ctx) => {
-        const trn = translate.get(ctx.state.langCode);
-        const rawText = trn.commands.warn;
-        const issuer = ctx.from;
-        const violator = ctx.message.reply_to_message.from;
-        const argumentQuery = ctx.message.text.split(' ');
-        const reasonText = ctx.message.text.substring(argumentQuery[0].length + 1);
-        const reason = reasonText ? reasonText : null;
-
-        await punishmentManagers.addPunishment(violator.id, issuer.id, ctx.chat.id, reason).catch((e) => {
-            logger.db.fatal(e.message);
-            throw e;
-        });
-
-        const punishments = await punishmentManagers.getValidUsersPunishmentsFromChat(violator.id, ctx.chat.id).catch((e) => {
-            logger.db.fatal(e.message);
-            throw e;
-        });
-
-        const chatData = await chatManagers.getChat(ctx.chat.id).catch((e) => {
-            logger.db.fatal(e.message);
-            throw e;
-        });
-
-        if (!chatData) {
-            await chatManagers.addChat(ctx.chat.id).catch((e) => {
-                logger.db.fatal(e.message);
-                throw e;
-            });
-        }
-
-        const maxPunishments = chatData[0] ? chatData[0].max_warns : 3;
-        console.log(reason);
-
-        let text = translateHelper.multiParseNames(rawText, issuer, violator);
-        text = text.replace('{cur}', punishments.length);
-        text = text.replace('{max}', maxPunishments);
-        text = text.replace('{reason}', reason === 'NULL' ?  trn.reasonNotSpecified : reasonText);
-
-        await ctx.reply(text, {parse_mode: 'HTML'}).catch((e) => {
-            logger.tg.fatal(e.message);
-            throw e;
-        });
-
-        if (punishments.length >= maxPunishments) {
-            const defaultDuration = chatData[0].warn_duration;
-            await userHelper.mute(ctx.telegram, ctx.chat, violator, defaultDuration).catch((e) => {
-                logger.tg.fatal(e.message);
-                throw e;
-            });
-        }
+        const args = ctx.message.text.split(' ');
+        const reason = ctx.message.text.substring(args[0].length);
+        await userHelper.warn(ctx.telegram, ctx.message.reply_to_message.from, ctx.from, ctx.chat, ctx.state.langCode, reason);
     },
     unwarn: async (ctx) => {
         const violator = ctx.message.reply_to_message.from;
@@ -68,14 +21,6 @@ const moderationController = {
             throw e;
         });
         const trn = translate.get(ctx.state.langCode);
-
-        if (!result[0]) {
-            const text = trn.errors.noWarns;
-            await ctx.reply(text).catch((e) => {
-                logger.tg.error(e.message);
-            });
-            return;
-        }
 
         const rawText = trn.commands.unwarn;
         const text = translateHelper.multiParseNames(rawText, violator, ctx.from);
@@ -100,84 +45,31 @@ const moderationController = {
             return;
         }
 
-        const duration = hours * 60 * 60 * 1000;
         const violator = ctx.message.reply_to_message.from;
 
-        await userHelper.mute(ctx.telegram, ctx.chat, violator, duration).catch((e) => {
+        await userHelper.mute(ctx.telegram, ctx.chat, violator, ctx.from, hours, ctx.state.langCode,reason).catch((e) => {
             logger.tg.fatal(e.message);
             throw e;
-        });
-
-        let text = translate.get(ctx.state.langCode).commands.mute;
-        text = translateHelper.multiParseNames(text, violator, ctx.from);
-        text = text.replace('{duration}', hours);
-
-        await punishmentManagers.addPunishment(violator.id, ctx.from.id, ctx.chat.id, reason ? reason : null, enums.PUNISHMENT.MUTE);
-
-        await ctx.reply(text, {parse_mode: 'HTML'}).catch((e) => {
-            logger.tg.error(e.message);
         });
     },
     unmute: async (ctx) => {
-        const violator = ctx.message.reply_to_message.from;
-
-        let text = translate.get(ctx.state.langCode).commands.unmute;
-        text = translateHelper.multiParseNames(text, violator, ctx.from);
-
-        await userHelper.unmute(ctx.telegram, ctx.chat, violator);
-
-        await ctx.reply(text, {parse_mode: 'HTML'}).catch((e) => {
-            logger.tg.fatal(e.message);
-            throw e;
-        });
+        await userHelper.unmute(ctx.telegram, ctx.chat, ctx.message.reply_to_message.from, ctx.from, ctx.state.langCode);
     },
     kick: async (ctx) => {
         const violator = ctx.message.reply_to_message.from;
-        const tr = translate.get(ctx.state.langCode);
         const args = ctx.message.text.split(' ');
         const reasonText = ctx.message.text.substring(args[0].length + 1);
         const reason = reasonText ? reasonText : null;
-        let text = tr.commands.kick;
 
-        text = translateHelper.multiParseNames(text, violator, ctx.from);
-        text = text.replace('{reason}', reason === 'NULL' ?  tr.reasonNotSpecified : reason);
-
-        await userHelper.kick(ctx.telegram, ctx.chat, violator).catch((e) => {
-            logger.tg.fatal(e.message);
-            throw e;
-        });
-
-        await punishmentManagers.addPunishment(violator.id, ctx.from.id, ctx.chat.id, reason, enums.PUNISHMENT.KICK).catch((e) => {
-            logger.db.error(e.message);
-        });
-
-        await ctx.reply(text, {parse_mode: 'HTML'}).catch((e) => {
-            logger.tg.error(e.message);
-        });
+        await userHelper.kick(ctx.telegram, violator, ctx.from, ctx.chat, ctx.state.langCode, reason);
     },
     ban: async (ctx) => {
         const violator = ctx.message.reply_to_message.from;
-        const tr = translate.get(ctx.state.langCode);
         const args = ctx.message.text.split(' ');
         const reasonText = ctx.message.text.substring(args[0].length + 1);
         const reason = reasonText ? reasonText : null;
-        let text = tr.commands.ban;
 
-        text = translateHelper.multiParseNames(text, violator, ctx.from);
-        text = text.replace('{reason}', reason === 'NULL' ?  tr.reasonNotSpecified : reason);
-
-        await ctx.telegram.banChatMember(ctx.chat.id, violator.id).catch((e) => {
-            logger.tg.fatal(e.message);
-            throw e;
-        });
-
-        await punishmentManagers.addPunishment(violator.id, ctx.from.id, ctx.chat.id, null, enums.PUNISHMENT.BAN).catch((e) => {
-            logger.db.error(e.message);
-        });
-
-        await ctx.reply(text, {parse_mode: 'HTML'}).catch((e) => {
-            logger.tg.error(e.message);
-        });
+        await userHelper.ban(ctx.telegram, violator, ctx.from, ctx.chat, ctx.state.langCode, reason);
     },
     history: async (ctx) => {
         const amount = await punishmentManagers.countAllPunishments(ctx.from.id, ctx.chat.id);

@@ -11,14 +11,14 @@ const messagesHelper = {
         }
         return false;
     },
-    isFirst: async (ctx) => {
-      const key = `firstMsgFiltration:${ctx.chat.id}:${ctx.from.id}`;
+    inStrictMode: async (ctx) => {
+      const key = `strictModeration:${ctx.chat.id}:${ctx.from.id}`;
       const data = await cacheHelper.get(key).catch((e) => {
           console.error(`[REDIS ERROR] messagesHelper isFirst cacheHelper.get`, e.message);
           throw e;
       })
       return data;
-    }
+    },
 }
 
 module.exports = messagesHelper;

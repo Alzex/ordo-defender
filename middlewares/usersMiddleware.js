@@ -59,7 +59,23 @@ const usersMiddleware = {
         });
         const targetMembership = targetMember.status;
 
-        if (targetMembership === 'administrator') return null;
+        if (targetMembership === 'administrator' || targetMember.status === 'creator') return null;
+
+        await next();
+    },
+    async whiteList(ctx, next) {
+      const target = ctx.from;
+
+      if (target.is_bot) return;
+
+        const targetMember = await ctx.telegram.getChatMember(ctx.chat.id, target.id).catch((e) => {
+            logger.tg.fatal(e.message);
+            throw e;
+        });
+
+        if (targetMember.status === 'administrator' || targetMember.status === 'creator') {
+            return;
+        }
 
         await next();
     },

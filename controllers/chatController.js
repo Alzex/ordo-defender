@@ -22,13 +22,8 @@ const chatController = {
     processNewUsers: async (ctx) => {
         const newMember = ctx.update.message.new_chat_member;
         const strictKey = cacheHelper.genKey('strictModeration', ctx.chat.id, newMember.id);
-        const messageKey = cacheHelper.genKey('firstMsgFiltration', ctx.chat.id, newMember.id);
 
         await cacheHelper.set(strictKey, config.STRICT_MODE_TTL).catch((e) => {
-            logger.redis.error(e.message);
-        });
-
-        await cacheHelper.set(messageKey, config.MESSAGE_MONITOR_TTL).catch((e) => {
             logger.redis.error(e.message);
         });
     }
