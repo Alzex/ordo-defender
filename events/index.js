@@ -5,8 +5,8 @@ const messagesMiddleware = require('../middlewares/messagesMiddleware');
 const events = {
     init: (bot) => {
         bot
-            .on('my_chat_member', messagesMiddleware.notFromPM, chatController.processMembership)
-            .on('new_chat_member',messagesMiddleware.notFromPM, usersMiddleware.canReply, chatController.processNewUsers)
+            .on('my_chat_member', usersMiddleware.applyLanguage, messagesMiddleware.notFromPM, chatController.processMembership)
+            .on('new_chat_member', usersMiddleware.applyLanguage, messagesMiddleware.notFromPM, usersMiddleware.canReply, chatController.processNewUsers)
             .on('message',
                 usersMiddleware.applyLanguage,
                 messagesMiddleware.notFromPM,
