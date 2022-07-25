@@ -131,7 +131,7 @@ const moderationController = {
         }
 
         for (const punishment of punishments) {
-
+            text += tr.entities.punishWarn;
             const issuer = await ctx.telegram.getChatMember(ctx.chat.id, Number(punishment.issuer_id)).catch((e) => {
                 console.error(`[TG API ERROR] moderationController history  ctx.telegram.getChatMember:`, e.message);
             }).catch((e) => {
@@ -143,17 +143,21 @@ const moderationController = {
                 throw e;
             });
 
-            text += tr.entities.punishWarn;
-            text = translateHelper.parseNames(text, issuer.user);
+            if (issuer) {
+                text = translateHelper.parseNames(text, issuer.user);
+            }
+
             if (forChat) {
+                text += tr.entities.violator;
                 const violator = await ctx.telegram.getChatMember(ctx.chat.id, Number(punishment.violator_id)).catch((e) => {
                     if (e.error_code === 400) {
                         text = text.replaceAll('{user}', '<b>DELETED</b>');
                         return;
                     }
                 });
-                text += tr.entities.violator;
-                text = translateHelper.parseNames(text, violator.user);
+                if (violator) {
+                    text = translateHelper.parseNames(text, violator.user);
+                }
             }
 
             text = text.replace('{type}', tr.typeToText[punishment.type.toString()]);
