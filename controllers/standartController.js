@@ -95,6 +95,38 @@ const standartController = {
         await ctx.editMessageText(langs[ctx.state.langCode], {parse_mode: 'HTML',...keyboards.settingsKeyboard(ctx.from.id)}).catch((e) => {
             logger.tg.error(e.message);
         });
+    },
+    async chat(ctx) {
+        const tr = translateData.get(ctx.state.langCode);
+        let text = tr.commands.chat;
+
+        text = text.replace('{name}', ctx.chat.title);
+        text = text.replace('{id}', ctx.chat.id);
+        const count = await ctx.telegram.getChatMembersCount(ctx.chat.id);
+        text = text.replace('{users}', count);
+
+        const admins = await ctx.telegram.getChatAdministrators(ctx.chat.id);
+
+        for (const admin of admins) {
+            if (admin.status === 'creator') {
+                text += tr.entities.admins.owner;
+            } else {
+                text += tr.entities.admins.admin;
+            }
+            text = translateHelper.parseNames(text, admin.user);
+        }
+        const markup = keyboards.chatKeyboard(ctx.from.id, ctx.state.langCode);
+
+        if (ctx.update.callback_query) {
+            await ctx.editMessageText(text, {parse_mode: 'HTML', ...markup}).catch((e) => {
+                logger.tg.fatal(e.message);
+                throw e;
+            });
+            await ctx.answerCbQuery();
+            return;
+        }
+
+        await ctx.reply(text, {parse_mode: 'HTML', ...markup});
     }
 }
 

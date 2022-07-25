@@ -44,7 +44,18 @@ const punishmentManagers = {
 
         return punish;
     },
-    getPunishments(userId, chatId, offset = 0, limit = 5) {
+    getPunishments(userId, chatId, offset = 0, limit = 5, forChat = false) {
+        if (forChat) {
+            const punish = db.punishment.findMany({
+                where: {
+                    from_chat_id: chatId
+                },
+                skip: offset,
+                take: limit
+            });
+            return punish;
+        }
+
         const punish = db.punishment.findMany({
             where: {
                 violator_id: userId,
@@ -56,7 +67,16 @@ const punishmentManagers = {
 
         return punish;
     },
-    countAllPunishments(userId, chatId) {
+    countAllPunishments(userId, chatId, forChat = false) {
+        if (forChat) {
+            const count = db.punishment.count({
+                where: {
+                    from_chat_id: chatId
+                }
+            });
+            return count;
+        }
+
         const count = db.punishment.count({
             where: {
                 violator_id: userId,

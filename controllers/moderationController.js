@@ -72,9 +72,17 @@ const moderationController = {
         await userHelper.ban(ctx.telegram, violator, ctx.from, ctx.chat, ctx.state.langCode, reason);
     },
     history: async (ctx) => {
-        const amount = await punishmentManagers.countAllPunishments(ctx.from.id, ctx.chat.id);
-        let text = translate.get(ctx.state.langCode).commands.history;
-        text = translateHelper.parseNames(text, ctx.from);
+        const arg = ctx.update.callback_query.data.split('/')[1];
+        const forChat = arg.includes('chat');
+
+        const amount = await punishmentManagers.countAllPunishments(ctx.from.id, ctx.chat.id, forChat);
+        const tr = translate.get(ctx.state.langCode);
+        let text = tr.commands.chatHistory;
+        text = text.replace('{name}', ctx.chat.title);
+        if (!forChat) {
+            text = tr.commands.history;
+            text = translateHelper.parseNames(text, ctx.from);
+        }
 
         let punishments = null;
         let markup = null;
@@ -92,38 +100,35 @@ const moderationController = {
             return;
         } else if (amount <= 5) {
 
-            punishments = await punishmentManagers.getPunishments(ctx.from.id, ctx.chat.id).catch((e) => {
+            punishments = await punishmentManagers.getPunishments(ctx.from.id, ctx.chat.id, 0, 5, forChat).catch((e) => {
                 logger.db.fatal(e.message);
                 throw e;
             });
 
-            markup = keyboards.backKeyboard(ctx.state.langCode, ctx.from.id);
+            markup = keyboards.backKeyboard(ctx.state.langCode, ctx.from.id, forChat);
         } else {
             maxPages = Math.ceil(amount / 5);
             const args = ctx.update.callback_query.data.split(':');
             const mainAction = args[0];
             const pg = args[2];
-            if (mainAction === 'history') {
+            if (mainAction === 'history/user' || mainAction === 'history/chat') {
                 curPage = 0;
             } else {
                 const action = mainAction.split('/');
                 const cur = parseInt(pg);
-                if (action?.[1] === 'next') {
+                if (action?.[2] === 'next') {
                     curPage = cur + 1;
                 } else {
                     curPage = cur - 1;
                 }
             }
 
-            punishments = await punishmentManagers.getPunishments(ctx.from.id, ctx.chat.id, curPage * 5).catch((e) => {
+            punishments = await punishmentManagers.getPunishments(ctx.from.id, ctx.chat.id, curPage * 5, 5, forChat).catch((e) => {
                 logger.db.fatal(e.message);
                 throw e;
             });
-            markup = keyboards.pagesKeyboard(curPage === 0, curPage + 1 === maxPages, curPage, ctx.from.id, ctx.state.langCode);
+            markup = keyboards.pagesKeyboard(curPage === 0, curPage + 1 === maxPages, curPage, ctx.from.id,forChat ? 'chat' : 'user', ctx.state.langCode, forChat);
         }
-
-        const tr = translate.get(ctx.state.langCode);
-
 
         for (const punishment of punishments) {
 
@@ -136,11 +141,17 @@ const moderationController = {
 
             text += tr.entities.punishWarn;
             text = translateHelper.parseNames(text, issuer.user);
+            if (forChat) {
+                const violator = await ctx.telegram.getChatMember(ctx.chat.id, Number(punishment.violator_id));
+                text += tr.entities.violator;
+                text = translateHelper.parseNames(text, violator.user);
+            }
+
             text = text.replace('{type}', tr.typeToText[punishment.type.toString()]);
             text = text.replace('{date}', moment(punishment.issued_at).format('DD.MM.YYYY HH:mm:ss'));
             let valid = punishment.disposed_at && punishment.disposed_by ? tr.entities.warnDisposed : tr.entities.warnExpired;
             valid = punishment.disposed_at ? valid : tr.entities.warnValid;
-            const reason = punishment.reason === 'NULL' ? tr.reasonNotSpecified : punishment.reason;
+            const reason = punishment.reason ? punishment.reason : tr.reasonNotSpecified;
             text = text.replace('{reason}', reason);
             if (punishment.type === enums.PUNISHMENT.WARN) {
                 text += tr.entities.stateWarn;
