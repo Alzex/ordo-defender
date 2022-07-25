@@ -16,7 +16,7 @@ const standartController = {
                 logger.db.fatal(e.message);
                 throw e;
             });
-            if (!chatsQuery[0]) {
+            if (!chatsQuery) {
                 await chatManagers.addChat(ctx.chat.id).catch((e) => {
                     logger.db.fatal(e.message);
                     throw e;
