@@ -135,6 +135,10 @@ const moderationController = {
             const issuer = await ctx.telegram.getChatMember(ctx.chat.id, Number(punishment.issuer_id)).catch((e) => {
                 console.error(`[TG API ERROR] moderationController history  ctx.telegram.getChatMember:`, e.message);
             }).catch((e) => {
+                if (e.error_code === 400) {
+                    text = text.replaceAll('{user}', '<b>DELETED</b>');
+                    return;
+                }
                 logger.tg.fatal(e.message);
                 throw e;
             });
@@ -142,7 +146,12 @@ const moderationController = {
             text += tr.entities.punishWarn;
             text = translateHelper.parseNames(text, issuer.user);
             if (forChat) {
-                const violator = await ctx.telegram.getChatMember(ctx.chat.id, Number(punishment.violator_id));
+                const violator = await ctx.telegram.getChatMember(ctx.chat.id, Number(punishment.violator_id)).catch((e) => {
+                    if (e.error_code === 400) {
+                        text = text.replaceAll('{user}', '<b>DELETED</b>');
+                        return;
+                    }
+                });
                 text += tr.entities.violator;
                 text = translateHelper.parseNames(text, violator.user);
             }
