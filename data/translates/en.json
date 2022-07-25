@@ -7,12 +7,15 @@
     "unmute": "<b>Unmuted \uD83D\uDD08</b>\n\n<b> Unmuted:</b> {user0}\n\nIssued by: {user1}",
     "profile": "<b>👤 {user}'s profile</b>\n\nID: {id}\n⚠️Warns: {cur}/{max}",
     "kick": "<b>User kicked</b>\n\nViolator: {user0}\nReason: {reason}\n\nIssued by: {user1}",
-    "history": "<b>\uD83D\uDEC3 {user}'s moderation history </b>\n\n"
+    "history": "<b>\uD83D\uDEC3 {user}'s moderation history </b>\n\n",
+    "chat": "<b>👥 {name}</b>\n\n\uD83C\uDD94 ID: {id}\n👥 Members: {users}\n\n<b>🛡️ Administrators:</b>\n\n",
+    "chatHistory": "<b>\uD83D\uDEC3 История нарушений {name}</b>\n\n"
   },
   "keyboards": {
     "profile": {
       "history": "🛃 Moderation history",
-      "back": "👤 Profile"
+      "back": "👤 Profile",
+      "moderationHistory": "\uD83D\uDEC3 Chat's moderation history"
     },
     "pm": "Add to group"
   },
@@ -24,7 +27,12 @@
     "warnDisposed": "<b>Not Valid</b> ❌",
     "empty": "<i>Empty</i>",
     "pages": "\nPage {curP} of {maxP}",
-    "stickerWarn": "<b>⚠️ Attention, {user}!</b>\n\nYou're sending stickers too fast, if you continue in that way you may be muted for 3 hours \uD83D\uDE20"
+    "violator": "\nViolator: {user}",
+    "stickerWarn": "<b>⚠️ Attention, {user}!</b>\n\nYou're sending stickers too fast, if you continue in that way you may be muted for 3 hours \uD83D\uDE20",
+    "admins": {
+      "owner": "👤 {user} <i>Owner</i>\n",
+      "admin": "👤 {user} \n"
+    }
   },
   "typeToText": {
     "0": "<i>Warn ⚠️</i>",

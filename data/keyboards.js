@@ -9,18 +9,24 @@ const keyboards = {
     },
     profileKeyboard(userLangCode, userId) {
         return new Markup.inlineKeyboard([
-            new Markup.button.callback(translate.get(userLangCode).keyboards.profile.history, `history:${userId}`)
+            new Markup.button.callback(translate.get(userLangCode).keyboards.profile.history, `history/user:${userId}`)
         ]);
 
     },
-    backKeyboard(userLangCode, userId) {
+    backKeyboard(userLangCode, userId, forChat = false) {
+        if (forChat) {
+            return new Markup.inlineKeyboard([
+                new Markup.button.callback(translate.get(userLangCode).keyboards.profile.back, `chat:${userId}`)
+            ]);
+        }
+
         return new Markup.inlineKeyboard([
             new Markup.button.callback(translate.get(userLangCode).keyboards.profile.back, `profile:${userId}`)
         ]);
     },
-    pagesKeyboard(isFirst, isLast, page, userId, userLangCode) {
-        const next = new Markup.button.callback('→', `history/next:${userId}:${page}`);
-        const prev = new Markup.button.callback('←', `history/prev:${userId}:${page}`);
+    pagesKeyboard(isFirst, isLast, page, userId, type, userLangCode, forChat = false) {
+        const next = new Markup.button.callback('→', `history/${type}/next:${userId}:${page}`);
+        const prev = new Markup.button.callback('←', `history/${type}/prev:${userId}:${page}`);
         const buttons = [[]];
         if (isFirst) {
             buttons[0].push(next);
@@ -30,7 +36,11 @@ const keyboards = {
             buttons[0].push(prev);
             buttons[0].push(next);
         }
-        buttons.push([new Markup.button.callback(translate.get(userLangCode).keyboards.profile.back, `profile:${userId}`)]);
+        let backButton = new Markup.button.callback(translate.get(userLangCode).keyboards.profile.back, `profile:${userId}`);
+        if (forChat) {
+            backButton = new Markup.button.callback(translate.get(userLangCode).keyboards.profile.back, `chat:${userId}`);
+        }
+        buttons.push([backButton]);
         return new Markup.inlineKeyboard(buttons);
     },
     settingsKeyboard(userId) {
@@ -39,6 +49,11 @@ const keyboards = {
             new Markup.button.callback('Українська 🇺🇦', `language:${userId}:uk`),
             new Markup.button.callback('English 🇬🇧', `language:${userId}:en`)
         ])
+    },
+    chatKeyboard(userId, langCode) {
+        return new Markup.inlineKeyboard([
+            new Markup.button.callback(translate.get(langCode).keyboards.profile.moderationHistory, `history/chat:${userId}`)
+        ]);
     }
 }
 

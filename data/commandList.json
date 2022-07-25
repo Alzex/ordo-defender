@@ -18,6 +18,15 @@
     "scope": "all_group_chats"
   },
   {
+    "name": "chat",
+    "description": {
+      "en": "Chat info",
+      "ru": "Информация о чате",
+      "uk": "Інформація про чат"
+    },
+    "scope": "all_chat_administrators"
+  },
+  {
     "name": "warn",
     "description": {
       "en": "Issues warning to a user",

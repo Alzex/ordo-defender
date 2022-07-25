@@ -79,6 +79,15 @@ const commands = {
                 usersMiddleware.applyLanguage,
                 moderationController.ban
             )
+            .command('chat',
+                usersMiddleware.canReply,
+                messagesMiddleware.notFromPM,
+                usersMiddleware.botIsAdmin,
+                usersMiddleware.isAdminOrDev,
+                messagesMiddleware.deleteCommandQuery,
+                usersMiddleware.applyLanguage,
+                standartController.chat
+            )
 
             //dev
             .command('updateCommandList', usersMiddleware.canReply, usersMiddleware.isDev, botController.updateCommandList)
