@@ -92,7 +92,6 @@ const commands = {
 
             //dev
             .command('updateCommandList', usersMiddleware.canReply, usersMiddleware.isDev, botController.updateCommandList)
-            .command('testGreeating', chatController.processNewUsers);
     }
 }
 
