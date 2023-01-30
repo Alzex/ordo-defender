@@ -23,6 +23,9 @@ const punishmentManagers = {
                 from_chat_id: chatId,
                 type: type,
                 disposed_at: null
+            },
+            orderBy: {
+                issued_at: 'desc',
             }
         });
 
@@ -50,6 +53,9 @@ const punishmentManagers = {
                 where: {
                     from_chat_id: chatId
                 },
+                orderBy: {
+                    issued_at: 'desc',
+                },
                 skip: offset,
                 take: limit
             });
@@ -60,6 +66,9 @@ const punishmentManagers = {
             where: {
                 violator_id: userId,
                 from_chat_id: chatId
+            },
+            orderBy: {
+                issued_at: 'desc',
             },
             skip: offset, 
             take: limit
