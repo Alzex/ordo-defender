@@ -113,7 +113,7 @@ const standartController = {
             } else {
                 text += tr.entities.admins.admin;
             }
-            text = translateHelper.parseNames(text, admin.user);
+            text = translateHelper.parseNames(text, admin.user, false);
         }
         const markup = keyboards.chatKeyboard(ctx.from.id, ctx.state.langCode);
 
