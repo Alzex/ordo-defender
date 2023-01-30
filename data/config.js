@@ -9,6 +9,7 @@ const config = {
     db: {
         URL: process.env.DATABASE_URL
     },
+    HARMONY_ID: process.env.HARMONY_ID,
     REDIS_URL: process.env.REDIS_URL,
     ERROR_CHAT: -1001653150520,
     DEAD_MESSAGE_TIME: 60,

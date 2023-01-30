@@ -3,6 +3,7 @@ const messagesMiddleware = require('../middlewares/messagesMiddleware');
 const moderationController = require('../controllers/moderationController')
 const standartController = require('../controllers/standartController');
 const botController = require('../controllers/botController');
+const chatController = require("../controllers/chatController");
 
 const commands = {
     init: (bot) => {
@@ -91,6 +92,7 @@ const commands = {
 
             //dev
             .command('updateCommandList', usersMiddleware.canReply, usersMiddleware.isDev, botController.updateCommandList)
+            .command('testGreeating', chatController.processNewUsers);
     }
 }
 
