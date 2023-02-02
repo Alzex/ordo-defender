@@ -111,7 +111,7 @@ const usersMiddleware = {
               logger.db.fatal(e.message);
               throw e;
           });
-          ctx.state.langCode = ctx.state.langCode ? ctx.state.langCode : 'en';
+          ctx.state.langCode = ctx.state.langCode ? ctx.state.langCode : 'ru';
           await next();
           return;
       }
