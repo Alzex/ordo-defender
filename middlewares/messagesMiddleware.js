@@ -39,7 +39,7 @@ const messagesMiddleware = {
             throw e;
         });
 
-        //if (messagesHelper.containsLink(ctx) && inStrictMode === '') {
+        if (messagesHelper.containsLink(ctx) && inStrictMode === '') {
             await ctx.telegram.deleteMessage(ctx.chat.id, ctx.message.message_id).catch((e) => {
                 console.error(`[TG API ERROR] messagesMiddleware isFirstAndWithoutLink ctx.telegram.deleteMessage:`, e.message);
                 throw e;
@@ -49,7 +49,7 @@ const messagesMiddleware = {
                 throw e;
             });
             return null;
-        //}
+        }
 
         await next();
     },
