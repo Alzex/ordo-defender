@@ -6,8 +6,8 @@ const translates = {ru, en, uk};
 
 const translateData = {
     get(code) {
-        if (!code) return translates.en;
-        return Object.keys(translates).includes(code) ? translates[code] : translates.en;
+        if (!code) return translates.ru;
+        return Object.keys(translates).includes(code) ? translates[code] : translates.ru;
     }
 }
 

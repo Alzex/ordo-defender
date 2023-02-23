@@ -7,6 +7,7 @@
     "unmute": "<b>Unmuted \uD83D\uDD08</b>\n\n<b> Unmuted:</b> {user0}\n\nIssued by: {user1}",
     "profile": "<b>👤 {user}'s profile</b>\n\nID: {id}\n⚠️Warns: {cur}/{max}",
     "kick": "<b>User kicked</b>\n\nViolator: {user0}\nReason: {reason}\n\nIssued by: {user1}",
+    "ban": "<b>User banned</b>\n\nViolator: {user0}\nReason: {reason}\n\nIssued by: {user1}",
     "history": "<b>\uD83D\uDEC3 {user}'s moderation history </b>\n\n",
     "chat": "<b>👥 {name}</b>\n\n\uD83C\uDD94 ID: {id}\n👥 Members: {users}\n\n<b>🛡️ Administrators:</b>\n\n",
     "chatHistory": "<b>\uD83D\uDEC3 История нарушений {name}</b>\n\n"
