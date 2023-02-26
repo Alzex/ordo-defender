@@ -89,6 +89,11 @@ const keyboards = {
       ),
     ]);
   },
+  acceptTicTacToeKeyboard(userId) {
+    return new Markup.inlineKeyboard([
+      new Markup.button.callback('Принять вызов', `ticTacToe/accept:${userId}`),
+    ]);
+  },
 };
 
 module.exports = keyboards;

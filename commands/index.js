@@ -4,6 +4,7 @@ const moderationController = require('../controllers/moderationController');
 const standartController = require('../controllers/standartController');
 const botController = require('../controllers/botController');
 const chatController = require('../controllers/chatController');
+const gameController = require('../controllers/gameController');
 
 const commands = {
   init: (bot) => {
@@ -117,6 +118,15 @@ const commands = {
         messagesMiddleware.deleteCommandQuery,
         usersMiddleware.applyLanguage,
         standartController.chat,
+      )
+
+      //gaming
+      .command(
+        'ticTacToe',
+        usersMiddleware.canReply,
+        messagesMiddleware.notFromPM,
+        usersMiddleware.applyLanguage,
+        gameController.ticTacToe,
       )
 
       //dev

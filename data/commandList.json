@@ -79,5 +79,14 @@
       "uk": "Скасовує мут користувача"
     },
     "scope": "all_chat_administrators"
+  },
+  {
+    "name": "ticTacToe",
+    "description": {
+      "en": "Play tic-tac-toe",
+      "ru": "Игра в крестики-нолики",
+      "uk": "Гра в крестики-нулики"
+    },
+    "scope": "all_group_chats"
   }
 ]

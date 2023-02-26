@@ -16,7 +16,8 @@
     "profile": {
       "history": "🛃 Moderation history",
       "back": "👤 Profile",
-      "moderationHistory": "\uD83D\uDEC3 Chat's moderation history"
+      "moderationHistory": "\uD83D\uDEC3 Chat's moderation history",
+      "acceptTicTacToe": "❌ Accept"
     },
     "pm": "Add to group"
   },
