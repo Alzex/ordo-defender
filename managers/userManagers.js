@@ -10,6 +10,7 @@ const userManagers = {
         id: id,
         language_code: langCode,
       },
+      update: {},
     });
 
     return user;
