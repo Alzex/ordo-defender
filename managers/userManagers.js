@@ -1,12 +1,16 @@
 const db = require('../modules/db');
 
 const userManagers = {
-  addUser: (id, langCode = 'en') => {
-    const user = db.user.create({
-      data: {
+  addUser: (id, langCode = 'ru') => {
+    const user = db.user.upsert({
+      where: {
+        id,
+      },
+      create: {
         id: id,
         language_code: langCode,
       },
+      update: {},
     });
 
     return user;

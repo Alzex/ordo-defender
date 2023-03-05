@@ -74,7 +74,7 @@ const userHelper = {
         logger.db.error(e.message);
       });
 
-    await tg.banChatMember(chat.id, user.id, until);
+    await tg.banChatMember(chat.id, violator.id, until);
 
     await tg.sendMessage(chat.id, text, { parse_mode: 'HTML' }).catch((e) => {
       logger.tg.error(e.message);

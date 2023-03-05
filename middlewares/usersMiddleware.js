@@ -125,10 +125,17 @@ const usersMiddleware = {
     const userRows = await userManagers.getUser(ctx.from.id);
 
     if (!userRows) {
-      await userManagers.addUser(ctx.from.id, ctx.state.langCode).catch((e) => {
-        logger.db.fatal(e.message);
-        throw e;
-      });
+      await userManagers
+        .addUser(ctx.from.id, ctx.state.langCode)
+        .catch(async (e) => {
+          logger.db.fatal(e.message);
+          await ctx.tg.sendMessage(
+            config.ERROR_CHAT,
+            `DB unknown error\n\nUID: ${ctx.from.id}\nDB Data:${JSON.stringify(
+              userRows || {},
+            )}\nERR: ${e.message}`,
+          );
+        });
       ctx.state.langCode = ctx.state.langCode ? ctx.state.langCode : 'ru';
       await next();
       return;
