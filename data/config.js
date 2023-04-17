@@ -15,6 +15,7 @@ const config = {
   DEAD_MESSAGE_TIME: 60,
   STRICT_MODE_TTL: 3600,
   MESSAGE_MONITOR_TTL: 3600 * 24 * 7,
+  WISH_GROUP_ID: process.env.WISH_GROUP_ID,
 };
 
 module.exports = config;

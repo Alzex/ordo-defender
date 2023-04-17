@@ -89,6 +89,29 @@ const keyboards = {
       ),
     ]);
   },
+  harmonyWelcomeButtons() {
+    return new Markup.inlineKeyboard([
+      [new Markup.button.url('Наш канал 🌸', 'https://t.me/harmony_of_teyvat')],
+      [
+        new Markup.button.url('Наш бот 😇', 'https://t.me/milvachatbot'),
+        new Markup.button.url(
+          'Молитвы в боте 💬',
+          'https://t.me/GenshinGachaSimulator_Chat',
+        ),
+      ],
+    ]);
+  },
+  gachaWelcomeButtons() {
+    return new Markup.inlineKeyboard([
+      [
+        new Markup.button.url(
+          'Наша основная группа 💬',
+          'https://t.me/harmony_of_teyvat_chat',
+        ),
+      ],
+      [new Markup.button.url('Наш канал 🌸', 'https://t.me/harmony_of_teyvat')],
+    ]);
+  },
 };
 
 module.exports = keyboards;
