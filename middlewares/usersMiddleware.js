@@ -46,10 +46,8 @@ const usersMiddleware = {
   isDev: async (ctx, next) => {
     const devs = config.ADMIN_IDS;
 
-    for (const dev of devs) {
-      if (dev === ctx.from.id) {
-        await next();
-      }
+    if (devs.contains(ctx.from.id)) {
+      return next();
     }
   },
   targetNotBotOrAdminOrSelf: async (ctx, next) => {

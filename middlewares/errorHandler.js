@@ -28,7 +28,7 @@ const errorHandler = {
       if (ctx.update.callback_query) {
         text = ctx.update.callback_query.data;
       }
-      const message = e.message.replace('<', '').replace('>', '');
+      const message = e.message.replaceAll(/[<>]+/g, '?');
       await ctx.telegram
         .sendMessage(
           config.ERROR_CHAT,

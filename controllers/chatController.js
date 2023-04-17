@@ -42,8 +42,11 @@ const chatController = {
           '🔶 <b><a href="https://t.me/harmony_of_teyvat">Наш канал</a></b> \n' +
           '🔶 <b><a href="https://t.me/milvachatbot">Бот-симулятор молитв</a></b>\n\n' +
           '🤗 <i>Я и администрация приветствуем тебя и желаем приятно провести время в чате</i>',
-        newMember,
+        ctx.from,
       );
+
+      console.log(text);
+
       await ctx.replyWithHTML(text, { disable_web_page_preview: true });
     }
   },
