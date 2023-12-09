@@ -93,7 +93,7 @@ const keyboards = {
     return new Markup.inlineKeyboard([
       [new Markup.button.url('Наш канал 🌸', 'https://t.me/harmony_of_teyvat')],
       [
-        new Markup.button.url('Наш бот 😇', 'https://t.me/milvachatbot'),
+        new Markup.button.url('Наш бот 😇', 'https://t.me/genshinGachaSimulatorBot'),
         new Markup.button.url(
           'Молитвы в боте 💬',
           'https://t.me/GenshinGachaSimulator_Chat',
